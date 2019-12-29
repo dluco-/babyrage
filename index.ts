@@ -84,6 +84,14 @@ async function parseResponse(response: {
   return { ema21, sma50, sma200, lastPrice, high };
 }
 
+/**
+ * Based on https://twitter.com/babyrageee/status/1203946111918116864
+ * @param ema21
+ * @param sma50
+ * @param sma200
+ * @param lastPrice
+ * @param high
+ */
 async function babyrageOk(
   ema21: number,
   sma50: number,
