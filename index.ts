@@ -1,6 +1,3 @@
-// GET DATA
-// CALCULATE
-
 import response from './mock/response.json';
 
 const { technicalAnalysis, lastPrice } = response;
@@ -21,16 +18,21 @@ const ema21trend = ema21[0].dataPoints[ema21[0].dataPoints.length - 1][1];
 const sma50trend = sma50[0].dataPoints[sma50[0].dataPoints.length - 1][1];
 const sma200trend = sma200[0].dataPoints[sma200[0].dataPoints.length - 1][1];
 
+// POSITIVE
 if (ema21trend <= 0) throw new Error('ema21 not positive');
 if (sma50trend <= 0) throw new Error('sma50 not positive');
 if (sma200trend <= 0) throw new Error('sma200 not positive');
 
+// EMA / SMA TREND
 if (ema21trend <= sma50trend) throw new Error('ema21 not over sma50');
 if (sma50trend <= sma200trend) throw new Error('sma50 not over sma200');
 
+// CLOSING PRICE
 if (lastPrice <= ema21trend) throw new Error('ema21 not over closing price');
 if (lastPrice <= sma50trend) throw new Error('sma50 not over closing price');
 if (lastPrice <= sma200trend) throw new Error('sma200 not over closing price');
+
+// 52 WEEK HIGH
 
 console.log(
   'ema21trend',
