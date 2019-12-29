@@ -1,6 +1,6 @@
 import response from './mock/response.json';
 
-const { technicalAnalysis, lastPrice } = response;
+const { technicalAnalysis, lastPrice, high } = response;
 
 const ema21 = technicalAnalysis.filter(
   x => x.type === 'ema' && x.timeFrame === 21
@@ -33,6 +33,8 @@ if (lastPrice <= sma50trend) throw new Error('sma50 not over closing price');
 if (lastPrice <= sma200trend) throw new Error('sma200 not over closing price');
 
 // 52 WEEK HIGH
+if (lastPrice / high <= 0.95 || lastPrice / high >= 1.05)
+  throw new Error('Not in 1-5% interval from 52 week high');
 
 console.log(
   'ema21trend',
@@ -40,5 +42,9 @@ console.log(
   'sma50trend',
   sma50trend,
   'sma200trend',
-  sma200trend
+  sma200trend,
+  'lastPrice',
+  lastPrice,
+  'high',
+  high
 );
