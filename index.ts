@@ -1,5 +1,6 @@
 // import response from './mock/response.json';
 import fetch from 'node-fetch';
+import stocks from './stocklist.json';
 
 async function requestStock(orderbookId: number) {
   const body = {
@@ -40,9 +41,12 @@ async function requestStock(orderbookId: number) {
       body: JSON.stringify(body)
     }
   )
-    .then((response: any) => response.json())
+    .then((response: any) => {
+      if (response.status === 500) return; // If stock gives no match, eg Kappahl
+      return response.json();
+    })
     .then((result: unknown) => result)
-    .catch((error: Error) => console.error(error));
+    .catch((error: Error) => console.error('StockId', orderbookId, error));
 }
 
 async function parseResponse(response: {
@@ -122,17 +126,21 @@ async function babyrageOk(
 }
 
 async function main() {
-  try {
-    const response = await requestStock(18928);
+  stocks.forEach(async stock => {
+    try {
+      await request(stock);
+    } catch (error) {
+      // console.error(error);
+    }
+  });
 
+  async function request(stock: any) {
+    const response = await requestStock(Number.parseInt(stock.api_id));
     const { ema21, sma50, sma200, lastPrice, high } = await parseResponse(
       response as any
     );
-
     await babyrageOk(ema21, sma50, sma200, lastPrice, high);
-    console.log('Buy stock');
-  } catch (error) {
-    console.log(error);
+    console.log('Buy:', stock);
   }
 }
 main();
