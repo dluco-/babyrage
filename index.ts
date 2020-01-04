@@ -1,6 +1,11 @@
-// import response from './mock/response.json';
 import fetch from 'node-fetch';
 import stocks from './stocklist.json';
+
+async function sleep(ms: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 async function requestStock(orderbookId: number) {
   const body = {
@@ -46,7 +51,15 @@ async function requestStock(orderbookId: number) {
       return response.json();
     })
     .then((result: unknown) => result)
-    .catch((error: Error) => console.error('StockId', orderbookId, error));
+    .catch(async (error: Error) => {
+      // Retry same stock if timeout
+      if (error.name === 'FetchError') {
+        await sleep(500);
+        await requestStock(orderbookId);
+        return;
+      }
+      console.log(error);
+    });
 }
 
 async function parseResponse(response: {
@@ -125,22 +138,29 @@ async function babyrageOk(
   return true;
 }
 
+/**
+ * Fetch, parse and calculate if stock meets requirments
+ * @param stock
+ * @returns true if valid and Error if not
+ */
+async function calculate(stock: { api_id: string; name: string }) {
+  const response = await requestStock(Number.parseInt(stock.api_id));
+  const { ema21, sma50, sma200, lastPrice, high } = await parseResponse(
+    response as any
+  );
+  return await babyrageOk(ema21, sma50, sma200, lastPrice, high);
+}
+
 async function main() {
   stocks.forEach(async stock => {
     try {
-      await request(stock);
+      await calculate(stock);
+      console.log(
+        `Buy: ${stock.name} https://www.avanza.se/aktier/om-aktien.html/${stock.api_id}`
+      );
     } catch (error) {
-      // console.error(error);
+      // console.error(error); // Enable to see stocks that not meet requirments.
     }
   });
-
-  async function request(stock: any) {
-    const response = await requestStock(Number.parseInt(stock.api_id));
-    const { ema21, sma50, sma200, lastPrice, high } = await parseResponse(
-      response as any
-    );
-    await babyrageOk(ema21, sma50, sma200, lastPrice, high);
-    console.log('Buy:', stock);
-  }
 }
 main();
