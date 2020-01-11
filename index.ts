@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { babyrageOk } from './babyrageOk';
-import stocks from './stocklist.json';
+import stocks from './stocklist/sv.json';
 
 async function sleep(ms: number) {
   return new Promise(resolve => {
