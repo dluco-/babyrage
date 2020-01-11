@@ -9,5 +9,4 @@ https://twitter.com/babyrageee/status/1203946111918116864
 
 ## Then?
 
-1. Limit amount of result (Sweden only?) ...
-2. Profit.
+1. Profit.
