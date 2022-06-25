@@ -23,7 +23,7 @@
     "jest": "25.1.0"
   },
   "dependencies": {
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "ts-node": "8.6.2",
     "typescript": "3.8.3"
   }
